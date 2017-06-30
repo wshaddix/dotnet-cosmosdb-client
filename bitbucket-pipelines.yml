@@ -9,6 +9,6 @@ pipelines:
           - dotnet build --configuration release
           # the tests won't run b/c there is no cosmosdb emulator running in this docker image
           #- dotnet test ./Tests/Tests.csproj
-          - dotnet pack --no-build --output nupkgs --configuration release --version-suffix $BITBUCKET_COMMIT
-          - cd ./nupkgs
+          - dotnet pack --no-build --configuration release --output nupkgs
+          - cd ./Client/nupkgs
           - dotnet nuget push *.nupkg -s  http://nts-us-south-central-dev-nts-nuget.azurewebsites.net/api/v2/package -k hy942q53h461v130T5T59wticZLst0l6
