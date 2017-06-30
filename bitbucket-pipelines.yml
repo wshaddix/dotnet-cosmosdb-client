@@ -4,11 +4,11 @@ pipelines:
   default:
     - step:
         script: # Modify the commands below to build your repository.
-          - cd src
+          - cd ./src/Client
           - dotnet restore
           - dotnet build --configuration release
           # the tests won't run b/c there is no cosmosdb emulator running in this docker image
           #- dotnet test ./Tests/Tests.csproj
-          - dotnet pack --no-build --output nupkgs --version-suffix "1.0.0"
-          - cd ./Client/nupkgs
+          - dotnet pack --no-build --output nupkgs --version-suffix $BITBUCKET_COMMIT
+          - cd ./nupkgs
           - dotnet nuget push *.nupkg -s  http://nts-us-south-central-dev-nts-nuget.azurewebsites.net/api/v2/package -k hy942q53h461v130T5T59wticZLst0l6
