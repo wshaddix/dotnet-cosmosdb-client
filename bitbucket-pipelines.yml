@@ -1,0 +1,13 @@
+# You can specify a custom docker image from Docker Hub as your build environment.
+image: microsoft/dotnet:1.1.2-sdk
+pipelines:
+  default:
+    - step:
+        script: # Modify the commands below to build your repository.
+          - cd src
+          - dotnet restore
+          - dotnet build --configuration release
+          - dotnet test ./Tests/Tests.csproj
+          - dotnet pack --no-build --output nupkgs --version-suffix "1.0.0"
+          - cd ./Client/nupkgs
+          - dotnet nuget push *.nupkg -s  http://nts-us-south-central-dev-nts-nuget.azurewebsites.net/api/v2/package -k hy942q53h461v130T5T59wticZLst0l6
