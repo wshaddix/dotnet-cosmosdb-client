@@ -1,27 +1,35 @@
-﻿using System;
+﻿using Extensions;
+using Microsoft.Azure.Documents;
+using Microsoft.Azure.Documents.Client;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
-using Extensions;
-using Microsoft.Azure.Documents.Client;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 
 namespace Client
 {
     public class CosmosDbClient
     {
         private readonly string _collectionId;
+        private readonly string _microserviceName;
         private readonly string _databaseId;
+        private readonly string _namespace;
         private readonly Uri _collectionUri;
         private readonly DocumentClient _documentClient;
-        private readonly JsonSerializerSettings _jsonSerializerSettings;
+        private readonly JsonSerializer _jsonSerializer;
 
-        public CosmosDbClient(Uri serviceEndpoint, string authKey, string databaseId, string collectionId, string[] preferredLocations)
+        public CosmosDbClient(Uri serviceEndpoint,
+                              string authKey,
+                              string databaseId,
+                              string collectionId,
+                              string[] preferredLocations,
+                              string microserviceName = null)
         {
             serviceEndpoint.EnsureNotNull(nameof(serviceEndpoint));
             authKey.EnsureExists(nameof(authKey));
@@ -31,7 +39,15 @@ namespace Client
 
             _databaseId = databaseId;
             _collectionId = collectionId;
+            _microserviceName = string.IsNullOrWhiteSpace(microserviceName) ? string.Empty : microserviceName.Trim();
+            _namespace = string.IsNullOrWhiteSpace(_microserviceName)
+                ? string.Empty
+                : string.Concat(_microserviceName, ".");
 
+            if (_microserviceName.Contains("."))
+            {
+                throw new CosmosDbConfigurationException($"The {nameof(microserviceName)} cannot contain a period.");
+            }
             _collectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, collectionId);
 
 #if DEBUG
@@ -49,19 +65,73 @@ namespace Client
 #endif
             _documentClient = new DocumentClient(serviceEndpoint, authKey, connectionPolicy);
 
-            _jsonSerializerSettings = new JsonSerializerSettings { ContractResolver = new InternalPropertyContractResolver() };
+            _jsonSerializer = new JsonSerializer { ContractResolver = new InternalPropertyContractResolver() };
         }
 
-        public async Task DeleteAsync(string id)
+        public async Task DeleteByIdAsync<T>(string id)
         {
-            // validate input param(s)
-            id.EnsureExists(nameof(id));
+            // get the entity by id. this will perform input validation and namespace validation for us
+            var entity = GetByIdAsync<T>(id);
 
             // generate a self-link of the document
             var selflink = UriFactory.CreateDocumentUri(_databaseId, _collectionId, id);
 
             // delete the document
             await _documentClient.DeleteDocumentAsync(selflink);
+        }
+
+        public async Task<T> GetByIdAsync<T>(string id)
+        {
+            // ensure the id is present
+            id.EnsureExists(nameof(id));
+
+            // try to fetch the document by id
+            DocumentResponse<JObject> documentResponse;
+
+            try
+            {
+                documentResponse = await _documentClient.ReadDocumentAsync<JObject>(UriFactory.CreateDocumentUri(_databaseId, _collectionId, id));
+            }
+            catch (DocumentClientException ex)
+            {
+                // if the document was not found throw our own exception
+                if (ex.Message.Contains("Resource Not Found"))
+                {
+                    throw new EntityNotFoundException($"An entity with id {id} was not found in the data store.");
+                }
+
+                throw;
+            }
+
+            var jObject = documentResponse.Document;
+
+            // if the document does not have an EntityType defined then just return it b/c we can't validate the namespace
+            // the only way the entity type property would be missing is if the document was saved manually outside of this
+            // CosmosDbClient class, because our Save method injects it every time. This is just here for safety.
+            if (jObject["EntityType"] == null)
+            {
+                return jObject.ToObject<T>(_jsonSerializer);
+            }
+
+            // get the document's entity type
+            var entityType = jObject.Value<string>("EntityType");
+
+            // parse out the document's namespace from the entity type (any text before the (.) character)
+            var documentNamespace = string.Empty;
+
+            if (entityType.Contains("."))
+            {
+                documentNamespace = entityType.Substring(0, entityType.IndexOf(".", StringComparison.Ordinal));
+            }
+
+            // if the document's namespace matches the configured microservice name then return it
+            if (documentNamespace.Equals(_microserviceName))
+            {
+                return jObject.ToObject<T>(_jsonSerializer);
+            }
+
+            // the document's namespace doesn't match the configured microservice name so throw an error
+            throw new EntityNotFoundException($"An entity with id {id} was found in the data store but is not in the '{_microserviceName}' namespace.");
         }
 
         public T Get<T>(Expression<Func<T, bool>> predicate)
@@ -72,24 +142,28 @@ namespace Client
             // use the documentdb client to generate the IOrderedQueryable<T> using it's linq provider
             var documentQuery = CreateDocumentQuery(predicate);
 
-            // if any of the predicate conditions contain the "Id" property we need to change the case to "id" so documentdb will work properly
-            var stringifiedQuery = CorrectCasingOfDocumentQuery(documentQuery.ToString());
+            // extract just the query from the CosmosDB IQueryable<T>
+            var dynamicQuery = JsonConvert.DeserializeObject<dynamic>(documentQuery.ToString());
+            var queryText = (string)dynamicQuery.query;
 
-            // convert the query to a dynamic so that we can easily pull just the query text
-            var jsonQuery = JsonConvert.DeserializeObject<dynamic>(stringifiedQuery);
+            // if any of the predicate conditions contain the "Id" property we need to change the case to "id" so documentdb will work properly
+            queryText = CorrectCasingOfDocumentQuery(queryText);
+
+            // inject the namespace predicate to prevent us from reading other microservice's documents
+            queryText = $"{queryText} AND root[\"EntityType\"] = '{_namespace}{typeof(T).Name}'";
 
             // execute the query without using generics so that we can just get a JObject back
-            var jObject = Enumerable.AsEnumerable(_documentClient.CreateDocumentQuery<JObject>(_collectionUri, (string)jsonQuery.query))
+            var jObject = Enumerable.AsEnumerable(_documentClient.CreateDocumentQuery<JObject>(_collectionUri, queryText))
                 .FirstOrDefault();
 
-            return null == jObject ? default(T) : JsonConvert.DeserializeObject<T>(jObject.ToString(), _jsonSerializerSettings);
+            return null == jObject ? default(T) : jObject.ToObject<T>(_jsonSerializer);
         }
 
         private static string CorrectCasingOfDocumentQuery(string documentQuery)
         {
-            if (documentQuery.Contains("root[\\\"Id\\\"]"))
+            if (documentQuery.Contains("root[\"Id\"]"))
             {
-                documentQuery = documentQuery.Replace("root[\\\"Id\\\"]", "root[\\\"id\\\"]");
+                documentQuery = documentQuery.Replace("root[\"Id\"]", "root[\"id\"]");
             }
             return documentQuery;
         }
@@ -115,11 +189,21 @@ namespace Client
             // add the dynamic order by clause to the document query
             documentQuery = AddDynamicOrderByClause(documentQuery, sortBy);
 
+            // extract just the query from the CosmosDB IQueryable<T>
+            var dynamicQuery = JsonConvert.DeserializeObject<dynamic>(documentQuery.ToString());
+            var queryText = (string)dynamicQuery.query;
+
             // if any of the predicate conditions contain the "Id" property we need to change the case to "id" so documentdb will work properly
-            var stringifiedQuery = CorrectCasingOfDocumentQuery(documentQuery.ToString());
+            queryText = CorrectCasingOfDocumentQuery(queryText);
+
+            // inject the namespace predicate to prevent us from reading other microservice's documents since this query has an ORDER BY claus, we have
+            // to inject the code just before the ORDER BY
+            var queryParts = queryText.Split(new[] { "ORDER BY" }, StringSplitOptions.None);
+
+            queryText = $"{queryParts[0]} AND root[\"EntityType\"] = '{_namespace}{typeof(T).Name}' ORDER BY {queryParts[1]}";
 
             // query for just the Ids of the documents that match the where clause so that we can get the total number of documents
-            var ids = QueryForIds(stringifiedQuery);
+            var ids = QueryForIds(queryText);
 
             // capture the count of how many documents match the WHERE clause
             totalCount = ids.Count;
@@ -128,16 +212,16 @@ namespace Client
             var skip = (page - 1) * pageSize;
 
             // grab the order by clause from the stringifiedQuery so that we can apply it to the final query
-            var startIndex = stringifiedQuery.IndexOf("ORDER BY", StringComparison.Ordinal);
-            var length = stringifiedQuery.Length - startIndex - 3;
-            var orderByClause = stringifiedQuery.Substring(startIndex, length);
+            var startIndex = queryText.IndexOf("ORDER BY", StringComparison.Ordinal);
+            var length = queryText.Length - startIndex - 1;
+            var orderByClause = queryText.Substring(startIndex, length);
 
             var finalQuery =
                 $"SELECT * FROM root WHERE root.id IN ('{string.Join("','", ids.Skip(skip).Take(pageSize))}')" + " " + orderByClause.Replace("\\\"", "'");
 
             var jObjects = _documentClient.CreateDocumentQuery<JObject>(_collectionUri, finalQuery).ToList();
 
-            var dataList = jObjects.Select(jObject => JsonConvert.DeserializeObject<T>(jObject.ToString(), _jsonSerializerSettings)).ToList();
+            var dataList = jObjects.Select(jObject => jObject.ToObject<T>(_jsonSerializer)).ToList();
 
             // calculate the number of total pages
             var actualPages = totalCount / (double)pageSize;
@@ -145,7 +229,7 @@ namespace Client
 
             return (data: dataList, totalCount: totalCount, totalPages: totalPages);
         }
-
+        
         private List<string> QueryForIds(string documentQuery)
         {
             var options = new FeedOptions
@@ -157,11 +241,8 @@ namespace Client
             // ids back instead of an IEnumerable<dynamic> that has an id property and a value)
             var idStringQuery = documentQuery.Replace("SELECT * FROM", "SELECT VALUE root.id FROM");
 
-            // convert the query to a dynamic so that we can easily pull just the query text
-            var idQuery = JsonConvert.DeserializeObject<dynamic>(idStringQuery);
-
             // get a list of ids that match the query
-            return _documentClient.CreateDocumentQuery<string>(_collectionUri, (string)idQuery.query, options)
+            return _documentClient.CreateDocumentQuery<string>(_collectionUri, idStringQuery, options)
                 .ToList();
         }
 
@@ -192,17 +273,19 @@ namespace Client
             // validate input param(s)
             data.EnsureNotNull(nameof(data));
 
-            // we're saving classes with internal properties (domain entities) so we need to include the internally scoped properties when we convert
-            // the object to a JObject
-            var serializer = new JsonSerializer { ContractResolver = new InternalPropertyContractResolver() };
-
             // if there is an "Id" property we need to change it to "id" so that it works with Azure Document Db
-            var jObject = JObject.FromObject(data, serializer);
+            var jObject = JObject.FromObject(data, _jsonSerializer);
             jObject["Id"]?.Rename("id");
+
+            // inject the entity type here including the microservice namespace
+            var entityType = data.GetType().Name;
+            jObject["EntityType"] = $"{_namespace}{entityType}";
 
             await _documentClient.UpsertDocumentAsync(_collectionUri, jObject).ConfigureAwait(false);
         }
 
+
+        [FullyCovered]
         private sealed class InternalPropertyContractResolver : DefaultContractResolver
         {
             protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)

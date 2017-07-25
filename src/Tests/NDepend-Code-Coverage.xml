@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Root CoveredStatements="362" TotalStatements="375" CoveragePercent="97" ReportType="NDependXML" DotCoverVersion="2017.1.3">
+  <Assembly Name="Client" CoveredStatements="143" TotalStatements="146" CoveragePercent="98">
+    <Namespace Name="Client" CoveredStatements="143" TotalStatements="146" CoveragePercent="98">
+      <Type Name="CosmosDbClient" CoveredStatements="137" TotalStatements="140" CoveragePercent="98">
+        <Type Name="&lt;DeleteByIdAsync&gt;d__8&lt;T&gt;" CoveredStatements="5" TotalStatements="5" CoveragePercent="100">
+          <Method Name="MoveNext()" CoveredStatements="5" TotalStatements="5" CoveragePercent="100" FirstStatementLine="72" />
+        </Type>
+        <Type Name="&lt;GetByIdAsync&gt;d__9&lt;T&gt;" CoveredStatements="23" TotalStatements="26" CoveragePercent="88">
+          <Method Name="MoveNext()" CoveredStatements="23" TotalStatements="26" CoveragePercent="88" FirstStatementLine="84" />
+        </Type>
+        <Type Name="&lt;SaveAsync&gt;d__16" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+          <Method Name="MoveNext()" CoveredStatements="8" TotalStatements="8" CoveragePercent="100" FirstStatementLine="272" />
+        </Type>
+        <Type Name="InternalPropertyContractResolver" CoveredStatements="18" TotalStatements="18" CoveragePercent="100">
+          <Method Name="CreateProperties(Type,MemberSerialization)" CoveredStatements="15" TotalStatements="15" CoveragePercent="100" FirstStatementLine="290" />
+          <Method Name="HasSetMethod(PropertyInfo)" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" FirstStatementLine="306" />
+        </Type>
+        <Method Name=".ctor(Uri,String,String,String,String[],String)" CoveredStatements="19" TotalStatements="19" CoveragePercent="100" FirstStatementLine="27" />
+        <Method Name="&lt;List&gt;b__13_0&lt;T&gt;(JObject)" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="224" />
+        <Method Name="AddDynamicOrderByClause&lt;T&gt;(IQueryable&lt;T&gt;,String)" CoveredStatements="13" TotalStatements="13" CoveragePercent="100" FirstStatementLine="250" />
+        <Method Name="CorrectCasingOfDocumentQuery(String)" CoveredStatements="7" TotalStatements="7" CoveragePercent="100" FirstStatementLine="163" />
+        <Method Name="CreateDocumentQuery&lt;T&gt;(Expression&lt;Func&lt;T,Boolean&gt;&gt;)" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" FirstStatementLine="172" />
+        <Method Name="Get&lt;T&gt;(Expression&lt;Func&lt;T,Boolean&gt;&gt;)" CoveredStatements="10" TotalStatements="10" CoveragePercent="100" FirstStatementLine="138" />
+        <Method Name="List&lt;T&gt;(Int32,Int32,String,Expression&lt;Func&lt;T,Boolean&gt;&gt;)" CoveredStatements="25" TotalStatements="25" CoveragePercent="100" FirstStatementLine="177" />
+        <Method Name="QueryForIds(String)" CoveredStatements="5" TotalStatements="5" CoveragePercent="100" FirstStatementLine="234" />
+      </Type>
+      <Type Name="CosmosDbConfigurationException" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+        <Method Name=".ctor(String)" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" FirstStatementLine="7" />
+      </Type>
+      <Type Name="EntityNotFoundException" CoveredStatements="3" TotalStatements="3" CoveragePercent="100">
+        <Method Name=".ctor(String)" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" FirstStatementLine="7" />
+      </Type>
+    </Namespace>
+  </Assembly>
+  <Assembly Name="Tests" CoveredStatements="219" TotalStatements="229" CoveragePercent="96">
+    <Namespace Name="Tests" CoveredStatements="219" TotalStatements="227" CoveragePercent="96">
+      <Type Name="CosmosDbTests" CoveredStatements="201" TotalStatements="209" CoveragePercent="96">
+        <Type Name="&lt;&gt;c__DisplayClass21_0" CoveredStatements="2" TotalStatements="3" CoveragePercent="67">
+          <Type Name="&lt;&lt;Getting_An_Entity_By_Id_That_Doesnt_Exist_Gives_An_Expected_Error&gt;b__0&gt;d" CoveredStatements="2" TotalStatements="3" CoveragePercent="67">
+            <Method Name="MoveNext()" CoveredStatements="2" TotalStatements="3" CoveragePercent="67" FirstStatementLine="332" />
+          </Type>
+        </Type>
+        <Type Name="&lt;&gt;c__DisplayClass22_0" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Type Name="&lt;&gt;c__DisplayClass23_0" CoveredStatements="2" TotalStatements="3" CoveragePercent="67">
+          <Type Name="&lt;&lt;One_Microservice_Namespace_Cannot_Read_From_Another_Microservices_Namespace_By_Id&gt;b__0&gt;d" CoveredStatements="2" TotalStatements="3" CoveragePercent="67">
+            <Method Name="MoveNext()" CoveredStatements="2" TotalStatements="3" CoveragePercent="67" FirstStatementLine="392" />
+          </Type>
+        </Type>
+        <Type Name="&lt;&gt;c__DisplayClass24_0" CoveredStatements="0" TotalStatements="0" CoveragePercent="0" />
+        <Type Name="&lt;An_Entity_That_Does_Not_Have_An_EntityType_Property_Can_Be_Fetched_By_Id&gt;d__9" CoveredStatements="6" TotalStatements="6" CoveragePercent="100">
+          <Method Name="MoveNext()" CoveredStatements="6" TotalStatements="6" CoveragePercent="100" FirstStatementLine="58" />
+        </Type>
+        <Type Name="&lt;Can_Create_And_Update_An_Object&gt;d__10" CoveredStatements="16" TotalStatements="16" CoveragePercent="100">
+          <Method Name="MoveNext()" CoveredStatements="16" TotalStatements="16" CoveragePercent="100" FirstStatementLine="79" />
+        </Type>
+        <Type Name="&lt;Can_Delete_An_Existing_Object&gt;d__11" CoveredStatements="5" TotalStatements="5" CoveragePercent="100">
+          <Method Name="MoveNext()" CoveredStatements="5" TotalStatements="5" CoveragePercent="100" FirstStatementLine="112" />
+        </Type>
+        <Type Name="&lt;Can_Fetch_A_List_Of_Objects&gt;d__12" CoveredStatements="14" TotalStatements="14" CoveragePercent="100">
+          <Method Name="MoveNext()" CoveredStatements="14" TotalStatements="14" CoveragePercent="100" FirstStatementLine="127" />
+        </Type>
+        <Type Name="&lt;Can_Get_An_Existing_Object_By_Id&gt;d__13" CoveredStatements="6" TotalStatements="6" CoveragePercent="100">
+          <Method Name="MoveNext()" CoveredStatements="6" TotalStatements="6" CoveragePercent="100" FirstStatementLine="157" />
+        </Type>
+        <Type Name="&lt;Can_Inject_Entity_Type_With_A_Microservice_Name_Specified&gt;d__14" CoveredStatements="9" TotalStatements="9" CoveragePercent="100">
+          <Method Name="MoveNext()" CoveredStatements="9" TotalStatements="9" CoveragePercent="100" FirstStatementLine="174" />
+        </Type>
+        <Type Name="&lt;Can_Inject_Entity_Type_With_No_Microservice_Name_Specified&gt;d__15" CoveredStatements="7" TotalStatements="7" CoveragePercent="100">
+          <Method Name="MoveNext()" CoveredStatements="7" TotalStatements="7" CoveragePercent="100" FirstStatementLine="204" />
+        </Type>
+        <Type Name="&lt;Can_Page_Results_And_Get_Total_Records_Along_With_Page_Size_And_Page_Count&gt;d__17" CoveredStatements="15" TotalStatements="15" CoveragePercent="100">
+          <Method Name="MoveNext()" CoveredStatements="15" TotalStatements="15" CoveragePercent="100" FirstStatementLine="236" />
+        </Type>
+        <Type Name="&lt;Can_Save_A_New_Object&gt;d__16" CoveredStatements="4" TotalStatements="4" CoveragePercent="100">
+          <Method Name="MoveNext()" CoveredStatements="4" TotalStatements="4" CoveragePercent="100" FirstStatementLine="223" />
+        </Type>
+        <Type Name="&lt;Can_Sort_A_List_Of_Objects_Ascending&gt;d__18" CoveredStatements="14" TotalStatements="14" CoveragePercent="100">
+          <Method Name="MoveNext()" CoveredStatements="14" TotalStatements="14" CoveragePercent="100" FirstStatementLine="262" />
+        </Type>
+        <Type Name="&lt;Can_Sort_A_List_Of_Objects_Descending&gt;d__19" CoveredStatements="14" TotalStatements="14" CoveragePercent="100">
+          <Method Name="MoveNext()" CoveredStatements="14" TotalStatements="14" CoveragePercent="100" FirstStatementLine="292" />
+        </Type>
+        <Type Name="&lt;Getting_An_Entity_By_Id_That_Doesnt_Exist_Gives_An_Expected_Error&gt;d__21" CoveredStatements="7" TotalStatements="7" CoveragePercent="100">
+          <Method Name="MoveNext()" CoveredStatements="7" TotalStatements="7" CoveragePercent="100" FirstStatementLine="328" />
+        </Type>
+        <Type Name="&lt;One_Microservice_Namespace_Cannot_Read_From_Another_Microservices_Namespace_By_Get_Predicate&gt;d__22" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+          <Method Name="MoveNext()" CoveredStatements="8" TotalStatements="8" CoveragePercent="100" FirstStatementLine="345" />
+        </Type>
+        <Type Name="&lt;One_Microservice_Namespace_Cannot_Read_From_Another_Microservices_Namespace_By_Id&gt;d__23" CoveredStatements="10" TotalStatements="10" CoveragePercent="100">
+          <Method Name="MoveNext()" CoveredStatements="10" TotalStatements="10" CoveragePercent="100" FirstStatementLine="372" />
+        </Type>
+        <Type Name="&lt;One_Microservice_Namespace_Cannot_Read_From_Another_Microservices_Namespace_By_List&gt;d__24" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+          <Method Name="MoveNext()" CoveredStatements="8" TotalStatements="8" CoveragePercent="100" FirstStatementLine="405" />
+        </Type>
+        <Method Name=".ctor()" CoveredStatements="7" TotalStatements="7" CoveragePercent="100" FirstStatementLine="16" />
+        <Method Name="&lt;A_Microservice_Name_Cannot_Contain_A_Period_Character&gt;b__8_0()" CoveredStatements="2" TotalStatements="3" CoveragePercent="67" FirstStatementLine="40" />
+        <Method Name="&lt;DeleteAllDatabaseDocuments&gt;b__29_0(TestObject)" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="477" />
+        <Method Name="&lt;DeleteAllDatabaseDocuments&gt;b__29_1(TestObjectNoEntityType)" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="481" />
+        <Method Name="A_Microservice_Name_Cannot_Contain_A_Period_Character()" CoveredStatements="6" TotalStatements="6" CoveragePercent="100" FirstStatementLine="38" />
+        <Method Name="AssertObjectsAreTheSame(TestObject,TestObject)" CoveredStatements="9" TotalStatements="9" CoveragePercent="100" FirstStatementLine="431" />
+        <Method Name="AssertObjectsAreTheSame(TestObjectNoEntityType,TestObject)" CoveredStatements="9" TotalStatements="9" CoveragePercent="100" FirstStatementLine="442" />
+        <Method Name="CreateCosmosDbClient(Uri,String,String,String,String[],String)" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" FirstStatementLine="464" />
+        <Method Name="CreateTestObject()" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" FirstStatementLine="453" />
+        <Method Name="DeleteAllDatabaseDocuments()" CoveredStatements="6" TotalStatements="6" CoveragePercent="100" FirstStatementLine="474" />
+        <Method Name="Dispose()" CoveredStatements="4" TotalStatements="4" CoveragePercent="100" FirstStatementLine="321" />
+        <Method Name="Finalize()" CoveredStatements="0" TotalStatements="5" CoveragePercent="0" FirstStatementLine="32" />
+        <Method Name="ReleaseUnmanagedResources()" CoveredStatements="3" TotalStatements="3" CoveragePercent="100" FirstStatementLine="486" />
+      </Type>
+      <Type Name="TestObject" CoveredStatements="10" TotalStatements="10" CoveragePercent="100">
+        <Method Name="get_Age()" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="7" />
+        <Method Name="get_Aliases()" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="8" />
+        <Method Name="get_EntityType()" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="11" />
+        <Method Name="get_FirstName()" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="9" />
+        <Method Name="get_Id()" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="10" />
+        <Method Name="set_Age(Int32)" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="7" />
+        <Method Name="set_Aliases(List&lt;String&gt;)" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="8" />
+        <Method Name="set_EntityType(String)" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="11" />
+        <Method Name="set_FirstName(String)" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="9" />
+        <Method Name="set_Id(String)" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="10" />
+      </Type>
+      <Type Name="TestObjectNoEntityType" CoveredStatements="8" TotalStatements="8" CoveragePercent="100">
+        <Method Name="get_Age()" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="7" />
+        <Method Name="get_Aliases()" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="8" />
+        <Method Name="get_FirstName()" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="9" />
+        <Method Name="get_Id()" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="10" />
+        <Method Name="set_Age(Int32)" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="7" />
+        <Method Name="set_Aliases(List&lt;String&gt;)" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="8" />
+        <Method Name="set_FirstName(String)" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="9" />
+        <Method Name="set_Id(String)" CoveredStatements="1" TotalStatements="1" CoveragePercent="100" FirstStatementLine="10" />
+      </Type>
+    </Namespace>
+    <Type Name="AutoGeneratedProgram" CoveredStatements="0" TotalStatements="2" CoveragePercent="0">
+      <Method Name="Main(String[])" CoveredStatements="0" TotalStatements="2" CoveragePercent="0" FirstStatementLine="3" />
+    </Type>
+  </Assembly>
+</Root>
