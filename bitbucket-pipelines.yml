@@ -1,7 +1,8 @@
 # You can specify a custom docker image from Docker Hub as your build environment.
 image: microsoft/dotnet:1.1.2-sdk
 pipelines:
-  default:
+  branches:
+    master:
     - step:
         script: # Modify the commands below to build your repository.
           - cd ./src/Client
