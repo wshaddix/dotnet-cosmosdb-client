@@ -1,0 +1,15 @@
+# You can specify a custom docker image from Docker Hub as your build environment.
+image: microsoft/dotnet:1.1.2-sdk
+pipelines:
+  branches:
+    master:
+    - step:
+        script: # Modify the commands below to build your repository.
+          - cd ./src/Client
+          - dotnet restore
+          - dotnet build --configuration release
+          # the tests won't run b/c there is no cosmosdb emulator running in this docker image
+          #- dotnet test ./Tests/Tests.csproj
+          - dotnet pack --no-build --configuration release --output nupkgs
+          - cd ./nupkgs
+          - dotnet nuget push *.nupkg -s  $NUGET_SERVER_API_URL -k $NUGET_SERVER_API_KEY
