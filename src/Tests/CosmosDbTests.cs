@@ -1,4 +1,5 @@
 ﻿using Client;
+using Client.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -104,7 +105,6 @@ namespace Tests
             Assert.True(updatedObject.Aliases[0].Equals("Updated Alias 1"));
             Assert.True(updatedObject.Aliases[1].Equals("Updated Alias 2"));
             Assert.True(updatedObject.Aliases[2].Equals("Updated Alias 3"));
-
         }
 
         [Fact]
@@ -136,7 +136,6 @@ namespace Tests
 
                 // save the test object
                 await _cosmosDb.SaveAsync(testObject);
-
             }
 
             // fetch the list of test objects
@@ -166,7 +165,6 @@ namespace Tests
 
             // verify that the properties match
             AssertObjectsAreTheSame(testObject, existingObject);
-
         }
 
         [Fact]
@@ -219,19 +217,6 @@ namespace Tests
         }
 
         [Fact]
-        public async Task Can_Save_A_New_Object()
-        {
-            // create a test object
-            var testObject = CreateTestObject();
-
-            // save the test object
-            await _cosmosDb.SaveAsync(testObject);
-
-            // if the test does not return an error it's all good
-
-        }
-
-        [Fact]
         public async Task Can_Page_Results_And_Get_Total_Records_Along_With_Page_Size_And_Page_Count()
         {
             // create 10 documents
@@ -245,7 +230,6 @@ namespace Tests
 
                 // save the test object
                 await _cosmosDb.SaveAsync(testObject);
-
             }
 
             // fetch the list of test objects
@@ -257,6 +241,19 @@ namespace Tests
             Assert.True(result.totalCount.Equals(10), $"Total count should have been 10 but was {result.totalCount}");
             Assert.True(result.data.Count().Equals(5), $"Data count should have been 5 but was {result.data.Count()}");
         }
+
+        [Fact]
+        public async Task Can_Save_A_New_Object()
+        {
+            // create a test object
+            var testObject = CreateTestObject();
+
+            // save the test object
+            await _cosmosDb.SaveAsync(testObject);
+
+            // if the test does not return an error it's all good
+        }
+
         [Fact]
         public async Task Can_Sort_A_List_Of_Objects_Ascending()
         {
@@ -274,7 +271,6 @@ namespace Tests
 
                 // save the test object
                 await _cosmosDb.SaveAsync(testObject);
-
             }
 
             // fetch the list of test objects
@@ -304,7 +300,6 @@ namespace Tests
 
                 // save the test object
                 await _cosmosDb.SaveAsync(testObject);
-
             }
 
             // fetch the list of test objects

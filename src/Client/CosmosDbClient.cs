@@ -1,4 +1,5 @@
-﻿using Extensions;
+﻿using Client.Exceptions;
+using Client.Extensions;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Newtonsoft.Json;
@@ -105,9 +106,9 @@ namespace Client
 
             var jObject = documentResponse.Document;
 
-            // if the document does not have an EntityType defined then just return it b/c we can't validate the namespace
-            // the only way the entity type property would be missing is if the document was saved manually outside of this
-            // CosmosDbClient class, because our Save method injects it every time. This is just here for safety.
+            // if the document does not have an EntityType defined then just return it b/c we can't validate the namespace the only way the entity type
+            // property would be missing is if the document was saved manually outside of this CosmosDbClient class, because our Save method injects it
+            // every time. This is just here for safety.
             if (jObject["EntityType"] == null)
             {
                 return jObject.ToObject<T>(_jsonSerializer);
@@ -229,7 +230,7 @@ namespace Client
 
             return (data: dataList, totalCount: totalCount, totalPages: totalPages);
         }
-        
+
         private List<string> QueryForIds(string documentQuery)
         {
             var options = new FeedOptions
@@ -284,8 +285,6 @@ namespace Client
             await _documentClient.UpsertDocumentAsync(_collectionUri, jObject).ConfigureAwait(false);
         }
 
-
-        [FullyCovered]
         private sealed class InternalPropertyContractResolver : DefaultContractResolver
         {
             protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)

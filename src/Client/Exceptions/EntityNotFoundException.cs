@@ -1,8 +1,7 @@
 ﻿using System;
 
-namespace Client
+namespace Client.Exceptions
 {
-    [FullyCovered]
     public class EntityNotFoundException : Exception
     {
         public EntityNotFoundException(string message) : base(message)
